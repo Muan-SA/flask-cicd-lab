@@ -28,18 +28,29 @@ jobs:
       - name: Validate release tag and commit
         shell: bash
         run: |
+          set -euo pipefail
+
+          # Validate semantic version format
           if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Invalid version tag"
+            echo "Invalid release tag: $GITHUB_REF_NAME"
             exit 1
           fi
 
-          git fetch origin main
+          # Verify main is available locally
+          git rev-parse --verify refs/remotes/origin/main
 
-          if [ "$(git rev-parse HEAD)" != \
-               "$(git rev-parse origin/main)" ]; then
-            echo "Release must target current main HEAD"
+          # Check that release tag points to the latest main commit
+          MAIN_SHA="$(git rev-parse refs/remotes/origin/main)"
+          RELEASE_SHA="$(git rev-parse HEAD)"
+
+          if [[ "$RELEASE_SHA" != "$MAIN_SHA" ]]; then
+            echo "Release tag must reference the current main HEAD"
+            echo "Release: $RELEASE_SHA"
+            echo "Main:    $MAIN_SHA"
             exit 1
           fi
+
+          echo "Release $GITHUB_REF_NAME validated successfully"
 
       - name: Set up Python
         uses: actions/setup-python@v6
