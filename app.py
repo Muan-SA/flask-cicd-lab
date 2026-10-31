@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.get("/")
 def index():
     return jsonify({
-        "message": "Hello from Flask CI/CD lab!",
+        "message": "Updated automatically by Watchtower!",
         "version": os.getenv("APP_VERSION", "dev")
     })
 

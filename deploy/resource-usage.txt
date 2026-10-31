@@ -1,0 +1,3 @@
+CONTAINER ID   NAME                          CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O   PIDS
+f36140abb9e6   flask-cicd-lab-watchtower-1   0.02%     15.8MiB / 3.825GiB    0.40%     19.9kB / 7.96kB   0B / 0B     7
+28495dc44c4e   flask-cicd-lab-flask-1        0.01%     42.16MiB / 3.825GiB   1.08%     2.44kB / 1.39kB   0B / 0B     2

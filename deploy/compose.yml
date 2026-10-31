@@ -1,0 +1,49 @@
+
+name: flask-cicd-lab
+
+services:
+
+  flask:
+    image: ${IMAGE:?Set IMAGE in .env}
+    pull_policy: always
+    restart: unless-stopped
+
+    ports:
+      - "127.0.0.1:8080:8000"
+
+    read_only: true
+
+    tmpfs:
+      - /tmp
+
+    security_opt:
+      - no-new-privileges:true
+
+    cap_drop:
+      - ALL
+
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  watchtower:
+    image: nickfedor/watchtower:latest
+    restart: unless-stopped
+
+    environment:
+      WATCHTOWER_POLL_INTERVAL: "300" # it was 30, 5 minutes makes more sense with no frequent updates
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_CLEANUP: "false"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
